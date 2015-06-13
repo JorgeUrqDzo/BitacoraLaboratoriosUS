@@ -1,5 +1,7 @@
 package ConexionBD;
 
+import java.sql.*;
+
 /**
  * Created by JorgeLuis on 13/06/2015.
  */
@@ -18,40 +20,35 @@ public class BD {
 
     public BD() {
         this.nombreBD = "bitacora";
-        this.usuario = "bitacora";
+        this.usuario = "Bitacora";
         this.password = "123";
         this.dbURL = "jdbc:mysql://localhost:3306/bitacora";
     }
 
-    public String getNombreBD() {
-        return nombreBD;
-    }
+    public Boolean Login(String u, String p){
 
-    public void setNombreBD(String nombreBD) {
-        this.nombreBD = nombreBD;
-    }
 
-    public String getUsuario() {
-        return usuario;
-    }
+        try (Connection conn = DriverManager.getConnection(this.dbURL, this.usuario, this.password)) {
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
+            String sql = "SELECT nombre, password FROM  usuario WHERE nombre = '"+ u +"' and password = '"+ p +"'";
 
-    public String getPassword() {
-        return password;
-    }
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery(sql);
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+            int count = 0;
 
-    public String getDbURL() {
-        return dbURL;
-    }
+            while (result.next()){
+                String name = result.getString("nombre");
+                String pass = result.getString("password");
 
-    public void setDbURL(String dbURL) {
-        this.dbURL = dbURL;
+                ++count;
+                return true;
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
     }
 }
